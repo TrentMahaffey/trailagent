@@ -1,0 +1,200 @@
+/* ------------------------------
+   TRAIL AGENT REGISTRATION
+   ------------------------------ */
+
+#tcr-register-form {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 40px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.tcr-register-header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #ecfdf5;
+}
+
+.tcr-register-header h2 {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0 0 12px 0;
+  letter-spacing: -0.5px;
+}
+
+.tcr-register-header p {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.tcr-register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tcr-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 640px) {
+  .tcr-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  #tcr-register-form {
+    padding: 24px;
+    margin: 20px auto;
+  }
+}
+
+.tcr-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tcr-form-group label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+}
+
+.tcr-form-group input[type="text"],
+.tcr-form-group input[type="email"],
+.tcr-form-group input[type="password"] {
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 16px;
+  transition: all .2s ease;
+  font-family: inherit;
+}
+
+.tcr-form-group input:focus {
+  outline: none;
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5,150,105,.1);
+}
+
+.tcr-form-group small {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.tcr-form-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.tcr-form-group label:has(input[type="checkbox"]) {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-weight: 500;
+  font-size: 14px;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.tcr-register-button {
+  margin-top: 12px;
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s ease;
+  box-shadow: 0 4px 14px rgba(5,150,105,.3);
+  font-family: inherit;
+}
+
+.tcr-register-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(5,150,105,.4);
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+}
+
+.tcr-register-button:active {
+  transform: translateY(0);
+}
+
+.tcr-register-footer {
+  text-align: center;
+  margin-top: 16px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.tcr-register-footer a {
+  color: #059669;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.tcr-register-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Messages */
+.tcr-message {
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.tcr-message h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+}
+
+.tcr-message p {
+  margin: 8px 0;
+}
+
+.tcr-message p:last-child {
+  margin-bottom: 0;
+}
+
+.tcr-message a {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.tcr-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.tcr-success {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+.tcr-info {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+}

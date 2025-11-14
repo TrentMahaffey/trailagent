@@ -193,4 +193,44 @@ function tcr_run_migrations() {
       ADD INDEX idx_photo_gps (gps_lat, gps_lng)
     ");
   }
+
+  // --- Outstanding maintenance tracking ---
+  if (!$col_exists($pho, 'is_outstanding')) {
+    $wpdb->query("ALTER TABLE $pho
+      ADD COLUMN is_outstanding TINYINT(1) NOT NULL DEFAULT 0 AFTER gps_lng,
+      ADD INDEX idx_outstanding (is_outstanding)
+    ");
+  }
+
+  if (!$col_exists($pho, 'resolved_at')) {
+    $wpdb->query("ALTER TABLE $pho
+      ADD COLUMN resolved_at DATETIME NULL AFTER is_outstanding,
+      ADD COLUMN resolved_by BIGINT UNSIGNED NULL AFTER resolved_at
+    ");
+  }
+
+  // Add reviewed_at to track which photos admin has reviewed
+  if (!$col_exists($pho, 'reviewed_at')) {
+    $wpdb->query("ALTER TABLE $pho
+      ADD COLUMN reviewed_at DATETIME NULL AFTER resolved_by,
+      ADD INDEX idx_reviewed (reviewed_at)
+    ");
+  }
+
+  // Add resolution_notes and resolution_date for detailed resolution tracking
+  if (!$col_exists($pho, 'resolution_notes')) {
+    $wpdb->query("ALTER TABLE $pho
+      ADD COLUMN resolution_notes TEXT NULL AFTER reviewed_at
+    ");
+  }
+
+  if (!$col_exists($pho, 'resolution_date')) {
+    $wpdb->query("ALTER TABLE $pho
+      ADD COLUMN resolution_date DATE NULL AFTER resolution_notes
+    ");
+  }
+
+  // Trail status and GPX data are stored as post meta, no schema changes needed
+  // Statuses: open, seasonal, muddy, hazardous
+  // Meta keys: trail_status, trail_gpx_data, trail_color
 }

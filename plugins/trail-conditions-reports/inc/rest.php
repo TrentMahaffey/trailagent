@@ -548,11 +548,93 @@ function tcr_api_analytics() {
     WHERE COALESCE(work_date, DATE(created_at)) >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
   ", ARRAY_A);
 
+  // ---- RESOLUTION TRACKING ----
+  $pho = "{$wpdb->prefix}trail_report_photos";
+
+  // Resolution statistics
+  $resolution_stats = $wpdb->get_row("
+    SELECT
+      COUNT(*) as total_outstanding,
+      SUM(CASE WHEN resolved_at IS NOT NULL THEN 1 ELSE 0 END) as total_resolved,
+      SUM(CASE WHEN resolved_at IS NULL THEN 1 ELSE 0 END) as currently_active,
+      SUM(CASE WHEN resolved_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as resolved_30d,
+      SUM(CASE WHEN resolved_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 ELSE 0 END) as resolved_7d
+    FROM $pho
+    WHERE is_outstanding = 1
+  ", ARRAY_A);
+
+  // Resolution leaderboard (top resolvers)
+  $top_resolvers = $wpdb->get_results("
+    SELECT
+      p.resolved_by as user_id,
+      COUNT(*) as resolutions,
+      COUNT(DISTINCT r.trail_id) as trails_helped,
+      MIN(p.resolved_at) as first_resolution,
+      MAX(p.resolved_at) as latest_resolution
+    FROM $pho p
+    INNER JOIN $rpt r ON p.report_id = r.id
+    WHERE p.is_outstanding = 1 AND p.resolved_at IS NOT NULL
+    GROUP BY p.resolved_by
+    ORDER BY resolutions DESC
+    LIMIT 10
+  ", ARRAY_A);
+
+  // Add user names to leaderboard
+  foreach ($top_resolvers as &$resolver) {
+    $user = get_userdata($resolver['user_id']);
+    $resolver['display_name'] = $user ? $user->display_name : 'Unknown User';
+    $resolver['user_login'] = $user ? $user->user_login : 'unknown';
+  }
+
+  // Resolutions by month (last 12 months)
+  $resolutions_by_month = $wpdb->get_results("
+    SELECT
+      DATE_FORMAT(resolved_at, '%Y-%m') as month,
+      COUNT(*) as resolutions,
+      COUNT(DISTINCT resolved_by) as unique_resolvers
+    FROM $pho
+    WHERE is_outstanding = 1
+      AND resolved_at IS NOT NULL
+      AND resolved_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+    GROUP BY month
+    ORDER BY month DESC
+  ", ARRAY_A);
+
+  // Recent resolutions (last 10)
+  $recent_resolutions = $wpdb->get_results("
+    SELECT
+      p.id,
+      p.resolved_at,
+      p.resolved_by,
+      p.caption,
+      p.attachment_id,
+      r.trail_id,
+      r.work_date as reported_date
+    FROM $pho p
+    INNER JOIN $rpt r ON p.report_id = r.id
+    WHERE p.is_outstanding = 1 AND p.resolved_at IS NOT NULL
+    ORDER BY p.resolved_at DESC
+    LIMIT 10
+  ", ARRAY_A);
+
+  // Add trail names and user names to recent resolutions
+  foreach ($recent_resolutions as &$res) {
+    $res['trail_name'] = get_the_title($res['trail_id']);
+    $user = get_userdata($res['resolved_by']);
+    $res['resolved_by_name'] = $user ? $user->display_name : 'Unknown';
+    $res['image_url'] = wp_get_attachment_image_url($res['attachment_id'], 'thumbnail');
+  }
+
   return new WP_REST_Response([
     'by_area' => $by_area ?: [],
     'by_month' => $by_month ?: [],
     'hazard_trails' => $hazard_trails ?: [],
     'overall' => $overall ?: [],
     'recent' => $recent ?: [],
+    // Resolution data
+    'resolution_stats' => $resolution_stats ?: [],
+    'top_resolvers' => $top_resolvers ?: [],
+    'resolutions_by_month' => $resolutions_by_month ?: [],
+    'recent_resolutions' => $recent_resolutions ?: [],
   ], 200);
 }

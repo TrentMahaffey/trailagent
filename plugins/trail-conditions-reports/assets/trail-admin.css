@@ -1,0 +1,314 @@
+/**
+ * Trail Map Admin Styles
+ */
+
+.tcr-trail-admin-wrap {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  max-width: 1400px;
+}
+
+.tcr-trail-admin-wrap h1 {
+  margin-bottom: 24px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Admin Sections */
+.tcr-admin-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.tcr-admin-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.tcr-admin-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.tcr-admin-card h2 {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 12px;
+}
+
+.tcr-admin-card p {
+  margin: 0 0 16px 0;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* Import Section */
+#import-gpx-btn {
+  font-size: 16px;
+  padding: 12px 24px;
+  height: auto;
+}
+
+.import-status {
+  margin-top: 16px;
+}
+
+.import-status .notice {
+  margin: 0;
+  padding: 12px 16px;
+  border-left-width: 4px;
+}
+
+.import-status .errors {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0,0,0,0.1);
+  font-size: 13px;
+  color: #991b1b;
+}
+
+/* Trail Statistics */
+.trail-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 16px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 16px 12px;
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.stat-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-item.open {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #ffffff 0%, #d1fae5 100%);
+}
+
+.stat-item.open .stat-number {
+  color: #10b981;
+}
+
+.stat-item.seasonal {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #ffffff 0%, #dbeafe 100%);
+}
+
+.stat-item.seasonal .stat-number {
+  color: #3b82f6;
+}
+
+.stat-item.muddy {
+  border-color: #fbbf24;
+  background: linear-gradient(135deg, #ffffff 0%, #fef3c7 100%);
+}
+
+.stat-item.muddy .stat-number {
+  color: #f59e0b;
+}
+
+.stat-item.hazardous {
+  border-color: #ef4444;
+  background: linear-gradient(135deg, #ffffff 0%, #fee2e2 100%);
+}
+
+.stat-item.hazardous .stat-number {
+  color: #ef4444;
+}
+
+/* Trail Filters */
+.trail-filter {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  flex-wrap: wrap;
+}
+
+.trail-filter label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.trail-filter select {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 200px;
+}
+
+/* Trail Status Table */
+.trail-status-table {
+  margin-top: 0;
+}
+
+.trail-status-table th {
+  background: #f9fafb;
+  font-weight: 700;
+  color: #111827;
+  padding: 12px;
+  border-bottom: 2px solid #e5e7eb;
+  font-size: 13px;
+}
+
+.trail-status-table td {
+  padding: 12px;
+  vertical-align: middle;
+}
+
+.trail-status-table .status-select {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 180px;
+}
+
+.trail-status-table .seasonal-close-date,
+.trail-status-table .seasonal-open-date {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 13px;
+  width: 140px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.trail-status-table .seasonal-close-date:focus,
+.trail-status-table .seasonal-open-date:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.trail-status-table .update-status-btn {
+  margin-right: 8px;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  border-left: 3px solid;
+}
+
+.status-badge.status-open {
+  background: #d1fae5;
+  color: #065f46;
+  border-color: #10b981;
+}
+
+.status-badge.status-seasonal {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #3b82f6;
+}
+
+.status-badge.status-muddy {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fbbf24;
+}
+
+.status-badge.status-hazardous {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #ef4444;
+}
+
+.no-gpx-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 4px 8px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+/* Mobile Responsive */
+@media (max-width: 1200px) {
+  .tcr-admin-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .trail-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .trail-filter {
+    flex-direction: column;
+  }
+
+  .trail-filter select {
+    min-width: 100%;
+  }
+
+  .trail-status-table {
+    font-size: 13px;
+  }
+
+  .trail-status-table th,
+  .trail-status-table td {
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .trail-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stat-number {
+    font-size: 24px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+  }
+}

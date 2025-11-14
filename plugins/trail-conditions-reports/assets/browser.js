@@ -87,7 +87,11 @@
   // -------------------- Small DOM helpers --------------------
   const $ = (sel) => document.querySelector(sel);
   function escapeHtml(s) {
-    return String(s ?? "").replace(/[&<>"']/g, (c) => ({
+    // First decode any existing HTML entities, then escape for safety
+    const txt = document.createElement('textarea');
+    txt.innerHTML = s ?? "";
+    const decoded = txt.value;
+    return String(decoded).replace(/[&<>"']/g, (c) => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     })[c]);
   }

@@ -20,8 +20,17 @@ require_once TCR_PATH . 'inc/meta.php';
 require_once TCR_PATH . 'inc/taxonomy.php';
 require_once TCR_PATH . 'inc/rest.php';       // REST API routes
 require_once TCR_PATH . 'inc/browser.php';    // front-end browser/shortcode UI
+require_once TCR_PATH . 'inc/registration.php'; // user registration
+require_once TCR_PATH . 'inc/outstanding.php';  // outstanding maintenance
+require_once TCR_PATH . 'inc/dashboard-nav.php'; // home page navigation
+require_once TCR_PATH . 'inc/trail-map.php';     // interactive trail map
 
 add_action('init', 'tcr_register_trail_cpt');
+
+// Enqueue global styles on all pages
+add_action('wp_enqueue_scripts', function() {
+  wp_enqueue_style('tcr-global', TCR_URL.'assets/global.css', [], filemtime(TCR_PATH.'assets/global.css'));
+});
 
 // Register activation hook ONCE
 register_activation_hook(__FILE__, function(){

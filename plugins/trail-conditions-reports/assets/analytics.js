@@ -6,7 +6,11 @@
   const API_URL = (CFG.root || '/wp-json/tcr/v1/') + 'analytics';
 
   function escapeHtml(s) {
-    return String(s ?? "").replace(/[&<>"']/g, (c) => ({
+    // First decode any existing HTML entities, then escape for safety
+    const txt = document.createElement('textarea');
+    txt.innerHTML = s ?? "";
+    const decoded = txt.value;
+    return String(decoded).replace(/[&<>"']/g, (c) => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     })[c]);
   }
@@ -168,6 +172,124 @@
     `;
   }
 
+  function renderResolutionStats(stats) {
+    if (!stats) {
+      return '<div class="tcr-empty">No resolution data available</div>';
+    }
+
+    return `
+      <div class="tcr-stats-grid">
+        <div class="tcr-stat-card resolution">
+          <div class="tcr-stat-value">${formatNumber(stats.total_resolved)}</div>
+          <div class="tcr-stat-label">Total Resolved</div>
+          <div class="tcr-stat-sub">${formatNumber(stats.resolved_30d)} in last 30 days</div>
+        </div>
+        <div class="tcr-stat-card active">
+          <div class="tcr-stat-value">${formatNumber(stats.currently_active)}</div>
+          <div class="tcr-stat-label">Currently Active</div>
+          <div class="tcr-stat-sub">${formatNumber(stats.resolved_7d)} resolved this week</div>
+        </div>
+        <div class="tcr-stat-card">
+          <div class="tcr-stat-value">${formatNumber(stats.total_outstanding)}</div>
+          <div class="tcr-stat-label">Total Outstanding Items</div>
+          <div class="tcr-stat-sub">All time</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderTopResolvers(resolvers) {
+    if (!resolvers || resolvers.length === 0) {
+      return '<div class="tcr-empty">No resolution activity yet</div>';
+    }
+
+    const rows = resolvers.map((r, index) => {
+      const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+      return `
+        <tr>
+          <td class="rank">${medal} ${index + 1}</td>
+          <td class="resolver-name">${escapeHtml(r.display_name)}</td>
+          <td>${formatNumber(r.resolutions)}</td>
+          <td>${formatNumber(r.trails_helped)}</td>
+          <td class="date">${new Date(r.latest_resolution).toLocaleDateString()}</td>
+        </tr>
+      `;
+    }).join('');
+
+    return `
+      <table class="tcr-table leaderboard">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Trail Agent</th>
+            <th>Items Resolved</th>
+            <th>Trails Helped</th>
+            <th>Latest Resolution</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    `;
+  }
+
+  function renderRecentResolutions(resolutions) {
+    if (!resolutions || resolutions.length === 0) {
+      return '<div class="tcr-empty">No recent resolutions</div>';
+    }
+
+    const items = resolutions.map(r => `
+      <div class="resolution-item">
+        ${r.image_url ? `<img src="${r.image_url}" alt="Trail photo">` : ''}
+        <div class="resolution-details">
+          <div class="resolution-trail">${escapeHtml(r.trail_name)}</div>
+          ${r.caption ? `<div class="resolution-caption">${escapeHtml(r.caption)}</div>` : ''}
+          <div class="resolution-meta">
+            Resolved by <strong>${escapeHtml(r.resolved_by_name)}</strong>
+            on ${new Date(r.resolved_at).toLocaleDateString()}
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    return `<div class="resolution-list">${items}</div>`;
+  }
+
+  function renderResolutionsByMonth(months) {
+    if (!months || months.length === 0) {
+      return '<div class="tcr-empty">No monthly resolution data available</div>';
+    }
+
+    const rows = months.map(m => {
+      const [year, month] = m.month.split('-');
+      const monthName = new Date(year, month - 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+      return `
+        <tr>
+          <td>${monthName}</td>
+          <td>${formatNumber(m.resolutions)}</td>
+          <td>${formatNumber(m.unique_resolvers)}</td>
+        </tr>
+      `;
+    }).join('');
+
+    return `
+      <table class="tcr-table">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Items Resolved</th>
+            <th>Unique Agents</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    `;
+  }
+
   async function render() {
     const container = document.getElementById('tcr-analytics-content');
     if (!container) return;
@@ -200,6 +322,29 @@
           <p class="tcr-help">Top 10 trails with the most reported hazards or conditions</p>
           ${renderHazardTrails(data.hazard_trails)}
         </section>
+
+        <section class="tcr-section tcr-resolution-section">
+          <h2>Outstanding Maintenance Resolutions</h2>
+          ${renderResolutionStats(data.resolution_stats)}
+        </section>
+
+        <section class="tcr-section">
+          <h2>🏆 Resolution Leaderboard</h2>
+          <p class="tcr-help">Top trail agents who have resolved the most outstanding maintenance items</p>
+          ${renderTopResolvers(data.top_resolvers)}
+        </section>
+
+        <div class="tcr-grid-2col">
+          <section class="tcr-section">
+            <h2>Resolutions by Month</h2>
+            ${renderResolutionsByMonth(data.resolutions_by_month)}
+          </section>
+
+          <section class="tcr-section">
+            <h2>Recent Resolutions</h2>
+            ${renderRecentResolutions(data.recent_resolutions)}
+          </section>
+        </div>
       `;
 
       container.innerHTML = html;
