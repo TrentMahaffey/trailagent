@@ -1,2 +1,7 @@
 .DS_Store
 .idea/
+.env
+
+# WordPress generated files
+wp-content/uploads/
+wp-content/debug.log

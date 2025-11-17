@@ -45,4 +45,12 @@ RUN { \
 # Working directory stays as /var/www/html (WordPress root)
 WORKDIR /var/www/html
 
-# No CMD override: keep base image entrypoint/CMD
+# Copy custom entrypoint scripts for Trail Agent auto-setup
+COPY docker-entrypoint-init.sh /usr/local/bin/
+COPY docker-entrypoint-wrapper.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint-init.sh \
+    && chmod +x /usr/local/bin/docker-entrypoint-wrapper.sh
+
+# Use our wrapper entrypoint (which calls the original WordPress entrypoint)
+ENTRYPOINT ["docker-entrypoint-wrapper.sh"]
+CMD ["apache2-foreground"]
